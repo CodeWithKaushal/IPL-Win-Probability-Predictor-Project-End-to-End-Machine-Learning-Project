@@ -28,7 +28,7 @@ This guide will walk you through the steps to deploy the IPL Win Predictor appli
    ### Option 1: Deploy via Netlify UI (easiest)
 
    1. Build your project locally:
-   
+
       ```
       cd ipl-win-predictor
       npm install
@@ -36,30 +36,32 @@ This guide will walk you through the steps to deploy the IPL Win Predictor appli
       ```
 
    2. Go to [Netlify](https://app.netlify.com/) and log in
-   
+
    3. Drag and drop the `ipl-win-predictor/dist` folder to the Netlify UI
-   
+
    4. Your site will be deployed with a random subdomain. You can change this in the site settings.
 
    ### Option 2: Deploy via Git (recommended)
 
    1. Push your project to a Git repository (GitHub, GitLab, or Bitbucket)
-   
+
    2. Go to [Netlify](https://app.netlify.com/) and log in
-   
+
    3. Click "New site from Git"
-   
+
    4. Select your Git provider and repository
-   
+
    5. Configure build settings:
+
       - Base directory: `ipl-win-predictor`
       - Build command: `npm run build`
       - Publish directory: `dist`
-   
+
    6. Add environment variables in the Netlify UI:
+
       - Key: `VITE_API_URL`
       - Value: Your API URL (e.g., `https://your-backend-api-url.com`)
-   
+
    7. Click "Deploy site"
 
 3. **Verify your deployment**

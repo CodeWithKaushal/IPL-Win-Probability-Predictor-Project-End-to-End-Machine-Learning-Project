@@ -1,3 +1,3 @@
 module.exports = {
-  "runtime": "python3.9"
+  runtime: "python3.9",
 };

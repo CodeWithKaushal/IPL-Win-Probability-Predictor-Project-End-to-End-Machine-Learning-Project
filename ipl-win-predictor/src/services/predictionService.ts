@@ -26,13 +26,16 @@ export interface PredictionResult {
 export const predictMatch = async (
   params: PredictionParams
 ): Promise<PredictionResult> => {
-  try {    // Call our backend API (either Flask API or Netlify function)
+  try {
+    // Call our backend API (either Flask API or Netlify function)
     const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-    const isNetlifyFunction = API_URL.includes('/.netlify/functions');
-    
+    const isNetlifyFunction = API_URL.includes("/.netlify/functions");
+
     // Adapt endpoint based on whether we're using Netlify functions or the Flask API
-    const endpoint = isNetlifyFunction ? `${API_URL}/predict` : `${API_URL}/predict`;
-    
+    const endpoint = isNetlifyFunction
+      ? `${API_URL}/predict`
+      : `${API_URL}/predict`;
+
     const response = await fetch(endpoint, {
       method: "POST",
       headers: {

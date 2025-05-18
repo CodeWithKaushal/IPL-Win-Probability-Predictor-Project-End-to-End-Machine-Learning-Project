@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from io import BytesIO
 
+
 def handler(event, context):
     """
     Netlify Function handler for prediction API
@@ -15,17 +16,17 @@ def handler(event, context):
             'statusCode': 405,
             'body': json.dumps({'error': 'Method not allowed'})
         }
-    
+
     try:
         # Parse request body
         body = json.loads(event['body'])
-        
+
         # Get model from environment (will need to be uploaded)
         model_path = os.path.join(os.path.dirname(__file__), 'pipe.pkl')
-        
+
         # Load the model
         pipe = pickle.load(open(model_path, 'rb'))
-        
+
         # Extract prediction parameters
         batting_team = body['batting_team']
         bowling_team = body['bowling_team']
@@ -76,7 +77,7 @@ def handler(event, context):
                 'winner': batting_team if batting_team_prob > bowling_team_prob else bowling_team
             })
         }
-        
+
     except Exception as e:
         return {
             'statusCode': 500,

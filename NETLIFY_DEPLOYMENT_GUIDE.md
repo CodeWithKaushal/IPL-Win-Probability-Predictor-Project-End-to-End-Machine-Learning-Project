@@ -27,6 +27,7 @@ copy "c:\Data\PROJECTS\IPL Win Probability Predictor Project  End to End Machine
 #### Option 1: Deploy via Netlify UI
 
 1. Build your project locally:
+
    ```bash
    cd "c:\Data\PROJECTS\IPL Win Probability Predictor Project  End to End Machine Learning Project\ipl-win-predictor"
    npm install
@@ -52,6 +53,7 @@ copy "c:\Data\PROJECTS\IPL Win Probability Predictor Project  End to End Machine
 4. Select your Git provider and repository
 
 5. Configure build settings:
+
    - Base directory: `ipl-win-predictor`
    - Build command: `npm run build`
    - Publish directory: `dist`
@@ -61,16 +63,19 @@ copy "c:\Data\PROJECTS\IPL Win Probability Predictor Project  End to End Machine
 #### Option 3: Deploy via Netlify CLI
 
 1. Install Netlify CLI:
+
    ```bash
    npm install netlify-cli -g
    ```
 
 2. Log in to Netlify:
+
    ```bash
    netlify login
    ```
 
 3. Navigate to your project:
+
    ```bash
    cd "c:\Data\PROJECTS\IPL Win Probability Predictor Project  End to End Machine Learning Project"
    ```
