@@ -1,0 +1,20 @@
+[build]
+  base = "ipl-win-predictor/"
+  publish = "dist/"
+  command = "npm run build"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Handle API requests to our prediction function
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Handle SPA routing for React Router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
