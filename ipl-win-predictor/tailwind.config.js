@@ -1,6 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}",
+  ],
   safelist: [
     "bg-gray-50",
     "bg-gray-100",
@@ -25,14 +29,33 @@ export default {
         primary: {
           DEFAULT: "#0072BC",
           hover: "#005a99",
-          100: "#cce5ff", // Light blue for backgrounds
+          50: "#e6f2ff",
+          100: "#cce5ff",
+          200: "#99cbff",
+          300: "#66b2ff",
+          400: "#3399ff",
+          500: "#0072BC",
+          600: "#005a99",
+          700: "#004380",
+          800: "#002b66",
+          900: "#001433",
         },
         secondary: {
           DEFAULT: "#FF6600",
           hover: "#e05a00",
+          50: "#fff3e6",
+          100: "#ffe6cc",
+          200: "#ffcc99",
+          300: "#ffb366",
+          400: "#ff9933",
+          500: "#FF6600",
+          600: "#e05a00",
+          700: "#cc5000",
+          800: "#994000",
+          900: "#662b00",
         },
       },
     },
   },
-  plugins: [],
+  plugins: [require("flowbite/plugin")],
 };

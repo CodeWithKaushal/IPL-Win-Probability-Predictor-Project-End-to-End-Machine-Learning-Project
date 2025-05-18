@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import { predictMatch } from "../services/predictionService";
 import type { PredictionResult } from "../services/predictionService";
@@ -69,9 +69,10 @@ const PredictorForm = () => {
   const [prediction, setPrediction] = useState<PredictionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [apiConnected, setApiConnected] = useState<boolean | null>(null);
+  const [activeTab, setActiveTab] = useState<"teams" | "situation">("teams");
 
   // Check if API is connected on component mount
-  useState(() => {
+  useEffect(() => {
     const checkApiConnection = async () => {
       try {
         const response = await fetch("http://localhost:5000/", {
@@ -87,7 +88,7 @@ const PredictorForm = () => {
       }
     };
     checkApiConnection();
-  });
+  }, []);
 
   // Handle form changes
   const handleChange = (
@@ -126,6 +127,13 @@ const PredictorForm = () => {
   // Handle form submission
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    setError(null);
+
+    // Validate teams are different
+    if (battingTeam === bowlingTeam) {
+      setError("Batting and bowling teams cannot be the same");
+      return;
+    }
 
     setLoading(true);
 
@@ -146,7 +154,7 @@ const PredictorForm = () => {
       .catch((error) => {
         console.error("Prediction error:", error);
         setLoading(false);
-        // Could add error handling UI here
+        setError("Failed to get prediction. Please try again later.");
       });
   };
 
@@ -163,157 +171,239 @@ const PredictorForm = () => {
   const progressPercentage = Math.min(100, (score / target) * 100);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8" id="predictor">
-      <div className="text-center mb-8">
+    <div className="max-w-7xl mx-auto px-4 py-16 mt-14" id="predictor">
+      <div className="text-center mb-10">
         <h1 className="text-4xl font-bold text-primary mb-2">
           IPL Win Probability Predictor
         </h1>
         <p className="text-xl text-gray-600">
-          Predict your team's chances in real-time
+          Predict your team's chances in real-time with machine learning
         </p>
       </div>
 
+      {error && (
+        <div
+          className="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded"
+          role="alert"
+        >
+          <p className="font-bold">Error</p>
+          <p>{error}</p>
+        </div>
+      )}
+
+      {apiConnected === false && (
+        <div
+          className="mb-6 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded"
+          role="alert"
+        >
+          <p className="font-bold">API Connection Failed</p>
+          <p>
+            The prediction API is not available. Using fallback method for
+            predictions.
+          </p>
+        </div>
+      )}
+
       <div className="grid md:grid-cols-3 gap-8">
         {/* Form Card */}
-        <div className="card md:col-span-1">
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">
-            Match Parameters
-          </h2>
+        <div className="card md:col-span-1 border border-gray-200">
+          <div className="flex border-b border-gray-200 mb-4">
+            <button
+              onClick={() => setActiveTab("teams")}
+              className={`px-4 py-2 text-sm font-medium ${
+                activeTab === "teams"
+                  ? "border-b-2 border-primary text-primary"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Teams
+            </button>
+            <button
+              onClick={() => setActiveTab("situation")}
+              className={`px-4 py-2 text-sm font-medium ${
+                activeTab === "situation"
+                  ? "border-b-2 border-primary text-primary"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Match Situation
+            </button>
+          </div>
 
           <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Batting Team
-              </label>
-              <select
-                name="battingTeam"
-                value={battingTeam}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              >
-                {teams.sort().map((team) => (
-                  <option key={team} value={team}>
-                    {team}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {activeTab === "teams" && (
+              <div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Batting Team
+                  </label>
+                  <select
+                    name="battingTeam"
+                    value={battingTeam}
+                    onChange={handleChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+                  >
+                    {teams.sort().map((team) => (
+                      <option key={team} value={team}>
+                        {team}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Bowling Team
-              </label>
-              <select
-                name="bowlingTeam"
-                value={bowlingTeam}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              >
-                {teams.sort().map((team) => (
-                  <option key={team} value={team}>
-                    {team}
-                  </option>
-                ))}
-              </select>
-            </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Bowling Team
+                  </label>
+                  <select
+                    name="bowlingTeam"
+                    value={bowlingTeam}
+                    onChange={handleChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+                  >
+                    {teams.sort().map((team) => (
+                      <option key={team} value={team}>
+                        {team}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            {/* Team logos display */}
-            <div className="flex items-center justify-center my-4">
-              <TeamLogo teamName={battingTeam} size="lg" showName={true} />
+                {/* Team logos display */}
+                <div className="flex items-center justify-center my-6 p-4 bg-gray-50 rounded-lg">
+                  <TeamLogo teamName={battingTeam} size="lg" showName={true} />
 
-              <span className="team-vs">VS</span>
+                  <div className="team-vs text-center px-2">VS</div>
 
-              <TeamLogo teamName={bowlingTeam} size="lg" showName={true} />
-            </div>
+                  <TeamLogo teamName={bowlingTeam} size="lg" showName={true} />
+                </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Host City
-              </label>
-              <select
-                name="city"
-                value={city}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              >
-                {cities.sort().map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
-            </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Host City
+                  </label>
+                  <select
+                    name="city"
+                    value={city}
+                    onChange={handleChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+                  >
+                    {cities.sort().map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
 
-            <h2 className="text-2xl font-bold mb-4 mt-6 text-gray-800">
-              Match Situation
-            </h2>
+            {activeTab === "situation" && (
+              <div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Target
+                  </label>
+                  <div className="flex">
+                    <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
+                      Runs
+                    </span>
+                    <input
+                      type="number"
+                      name="target"
+                      value={target}
+                      onChange={handleChange}
+                      min={1}
+                      className="rounded-none rounded-r-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-primary-500 focus:border-primary-500 block flex-1 min-w-0 w-full text-sm p-2.5"
+                    />
+                  </div>
+                </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Target
-              </label>
-              <input
-                type="number"
-                name="target"
-                value={target}
-                onChange={handleChange}
-                min={1}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Current Score
+                  </label>
+                  <div className="flex">
+                    <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
+                      Runs
+                    </span>
+                    <input
+                      type="number"
+                      name="score"
+                      value={score}
+                      onChange={handleChange}
+                      min={0}
+                      className="rounded-none rounded-r-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-primary-500 focus:border-primary-500 block flex-1 min-w-0 w-full text-sm p-2.5"
+                    />
+                  </div>
+                </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Current Score
-              </label>
-              <input
-                type="number"
-                name="score"
-                value={score}
-                onChange={handleChange}
-                min={0}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Overs Completed
+                  </label>
+                  <div className="flex">
+                    <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
+                      Overs
+                    </span>
+                    <input
+                      type="number"
+                      name="overs"
+                      value={overs}
+                      onChange={handleChange}
+                      min={0}
+                      max={19.5}
+                      step={0.1}
+                      className="rounded-none rounded-r-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-primary-500 focus:border-primary-500 block flex-1 min-w-0 w-full text-sm p-2.5"
+                    />
+                  </div>
+                </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Overs Completed
-              </label>
-              <input
-                type="number"
-                name="overs"
-                value={overs}
-                onChange={handleChange}
-                min={0}
-                max={19.5}
-                step={0.1}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Wickets Lost
+                  </label>
+                  <div className="flex">
+                    <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
+                      Wickets
+                    </span>
+                    <input
+                      type="number"
+                      name="wickets"
+                      value={wickets}
+                      onChange={handleChange}
+                      min={0}
+                      max={9}
+                      className="rounded-none rounded-r-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-primary-500 focus:border-primary-500 block flex-1 min-w-0 w-full text-sm p-2.5"
+                    />
+                  </div>
+                </div>
 
-            <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Wickets Lost
-              </label>
-              <input
-                type="number"
-                name="wickets"
-                value={wickets}
-                onChange={handleChange}
-                min={0}
-                max={9}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className="flex-1">
+                    <span className="text-xs text-gray-500">Current Score</span>
+                    <div className="text-lg font-semibold flex items-center">
+                      {score}/{wickets}
+                      <span className="text-sm text-gray-500 ml-1">
+                        ({overs} ov)
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-xs text-gray-500">Target</span>
+                    <div className="text-lg font-semibold">{target} runs</div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <button
               type="submit"
-              className="btn-primary flex justify-center items-center"
+              className="w-full text-white bg-primary hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-3 text-center transition-all"
               disabled={loading}
             >
               {loading ? (
-                <>
+                <div className="flex justify-center items-center">
                   <svg
                     className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
@@ -335,7 +425,7 @@ const PredictorForm = () => {
                     ></path>
                   </svg>
                   Calculating...
-                </>
+                </div>
               ) : (
                 "Predict Win Probability"
               )}
@@ -345,30 +435,40 @@ const PredictorForm = () => {
 
         {/* Match Summary and Prediction Card */}
         <div className="md:col-span-2">
-          <div className="card mb-6">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+          <div className="card mb-6 border border-gray-200">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">
               Match Situation
             </h2>
 
-            <div className="match-summary">
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <p className="text-gray-700 font-semibold">Target</p>
-                  <p className="text-2xl font-bold">{target} runs</p>
+            <div className="match-summary rounded-lg">
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                  <p className="text-gray-700 font-semibold text-sm">Target</p>
+                  <p className="text-2xl font-bold text-primary">
+                    {target} runs
+                  </p>
                 </div>
-                <div>
-                  <p className="text-gray-700 font-semibold">
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                  <p className="text-gray-700 font-semibold text-sm">
                     Required Run Rate
                   </p>
-                  <p className="text-2xl font-bold">{runRate}</p>
+                  <p className="text-2xl font-bold text-primary">{runRate}</p>
                 </div>
-                <div>
-                  <p className="text-gray-700 font-semibold">Runs Needed</p>
-                  <p className="text-2xl font-bold">{runsLeft} runs</p>
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                  <p className="text-gray-700 font-semibold text-sm">
+                    Runs Needed
+                  </p>
+                  <p className="text-2xl font-bold text-primary">
+                    {runsLeft} runs
+                  </p>
                 </div>
-                <div>
-                  <p className="text-gray-700 font-semibold">Balls Remaining</p>
-                  <p className="text-2xl font-bold">{ballsLeft} balls</p>
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                  <p className="text-gray-700 font-semibold text-sm">
+                    Balls Remaining
+                  </p>
+                  <p className="text-2xl font-bold text-primary">
+                    {ballsLeft} balls
+                  </p>
                 </div>
               </div>
 
@@ -376,7 +476,7 @@ const PredictorForm = () => {
                 <div className="flex mb-2 items-center justify-between">
                   <div>
                     <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-primary bg-primary-100">
-                      Progress
+                      Chase Progress
                     </span>
                   </div>
                   <div className="text-right">
@@ -385,10 +485,10 @@ const PredictorForm = () => {
                     </span>
                   </div>
                 </div>
-                <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
+                <div className="overflow-hidden h-2 mb-4 text-xs flex rounded-full bg-gray-200">
                   <div
                     style={{ width: `${progressPercentage}%` }}
-                    className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary"
+                    className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary rounded-full transition-all duration-500 ease-in-out"
                   ></div>
                 </div>
               </div>
@@ -396,14 +496,32 @@ const PredictorForm = () => {
           </div>
 
           {prediction && (
-            <div className="card">
-              <h2 className="text-2xl font-bold mb-4 text-gray-800">
-                Win Probability
-              </h2>
+            <div className="card border border-gray-200">
+              <div className="flex items-center mb-4">
+                <div className="w-10 h-10 flex items-center justify-center rounded-full bg-green-100 text-green-500 mr-3">
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Win Probability
+                </h2>
+              </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-6 bg-gray-50 p-6 rounded-lg mb-6">
                 <div>
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center mb-3">
                     <TeamLogo
                       teamName={battingTeam}
                       size="lg"
@@ -412,12 +530,12 @@ const PredictorForm = () => {
                   </div>
 
                   <div className="relative pt-4">
-                    <div className="overflow-hidden h-4 mb-1 text-xs flex rounded bg-gray-200">
+                    <div className="overflow-hidden h-5 mb-1 text-xs flex rounded-full bg-gray-200">
                       <div
                         style={{
                           width: `${prediction.battingTeamProb * 100}%`,
                         }}
-                        className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary"
+                        className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary rounded-full transition-all duration-1000 ease-in-out"
                       ></div>
                     </div>
                     <p
@@ -433,7 +551,7 @@ const PredictorForm = () => {
                 </div>
 
                 <div>
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center mb-3">
                     <TeamLogo
                       teamName={bowlingTeam}
                       size="lg"
@@ -442,12 +560,12 @@ const PredictorForm = () => {
                   </div>
 
                   <div className="relative pt-4">
-                    <div className="overflow-hidden h-4 mb-1 text-xs flex rounded bg-gray-200">
+                    <div className="overflow-hidden h-5 mb-1 text-xs flex rounded-full bg-gray-200">
                       <div
                         style={{
                           width: `${prediction.bowlingTeamProb * 100}%`,
                         }}
-                        className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary"
+                        className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-secondary rounded-full transition-all duration-1000 ease-in-out"
                       ></div>
                     </div>
                     <p
@@ -463,18 +581,21 @@ const PredictorForm = () => {
                 </div>
               </div>
 
-              <div className="mt-8 text-center">
+              <div className="mt-4 text-center">
                 <div
-                  className={`p-4 rounded-lg ${
+                  className={`p-6 rounded-lg ${
                     prediction.winner === battingTeam
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
+                      ? "bg-green-50 text-green-800 border border-green-200"
+                      : "bg-red-50 text-red-800 border border-red-200"
                   }`}
                 >
                   <h3 className="text-xl font-bold mb-1">Prediction</h3>
-                  <p className="text-2xl font-bold">
+                  <p className="text-2xl font-bold mb-2">
                     {prediction.winner} is likely to win!
                   </p>
+                  <div className="text-sm opacity-75">
+                    Based on similar match situations from historical IPL data
+                  </div>
                 </div>
               </div>
             </div>
