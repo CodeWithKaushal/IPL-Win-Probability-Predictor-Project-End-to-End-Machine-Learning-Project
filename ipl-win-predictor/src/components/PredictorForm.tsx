@@ -172,6 +172,7 @@ const PredictorForm = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-16 mt-14" id="predictor">
+      {" "}
       <div className="text-center mb-10">
         <h1 className="text-4xl font-bold text-primary mb-2">
           IPL Win Probability Predictor
@@ -179,8 +180,50 @@ const PredictorForm = () => {
         <p className="text-xl text-gray-600">
           Predict your team's chances in real-time with machine learning
         </p>
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary">
+            <svg
+              className="w-4 h-4 mr-1"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M6.672 1.911a1 1 0 10-1.932.518l.259.966a1 1 0 001.932-.518l-.26-.966zM2.429 4.74a1 1 0 10-.517 1.932l.966.259a1 1 0 00.517-1.932l-.966-.26zm8.814-.569a1 1 0 00-1.415-1.414l-.707.707a1 1 0 101.415 1.415l.707-.708zm-7.071 7.072l.707-.707A1 1 0 003.465 9.12l-.708.707a1 1 0 001.415 1.415zm3.2-5.171a1 1 0 00-1.3 1.3l4 10a1 1 0 001.823.075l1.38-2.759 3.018 3.02a1 1 0 001.414-1.415l-3.019-3.02 2.76-1.379a1 1 0 00-.076-1.822l-10-4z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+            ML-Powered
+          </span>
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+            <svg
+              className="w-4 h-4 mr-1"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zm7-10a1 1 0 01.707.293l.707.707L15.707 4a1 1 0 11-1.414 1.414L13 4.414l-.707.707a1 1 0 01-1.414-1.414l.707-.707L10.293 2A1 1 0 0112 2zm0 10a1 1 0 01.707.293l.707.707L15.707 14a1 1 0 11-1.414 1.414L13 14.414l-.707.707a1 1 0 01-1.414-1.414l.707-.707-.707-.707A1 1 0 0112 12z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+            Real-time
+          </span>
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+            <svg
+              className="w-4 h-4 mr-1"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+            </svg>
+            90% Accuracy
+          </span>
+        </div>
       </div>
-
       {error && (
         <div
           className="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded"
@@ -190,7 +233,6 @@ const PredictorForm = () => {
           <p>{error}</p>
         </div>
       )}
-
       {apiConnected === false && (
         <div
           className="mb-6 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded"
@@ -203,7 +245,6 @@ const PredictorForm = () => {
           </p>
         </div>
       )}
-
       <div className="grid md:grid-cols-3 gap-8">
         {/* Form Card */}
         <div className="card md:col-span-1 border border-gray-200">
@@ -250,7 +291,6 @@ const PredictorForm = () => {
                     ))}
                   </select>
                 </div>
-
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2">
                     Bowling Team
@@ -267,17 +307,37 @@ const PredictorForm = () => {
                       </option>
                     ))}
                   </select>
-                </div>
-
+                </div>{" "}
                 {/* Team logos display */}
-                <div className="flex items-center justify-center my-6 p-4 bg-gray-50 rounded-lg">
-                  <TeamLogo teamName={battingTeam} size="lg" showName={true} />
+                <div className="flex items-center justify-center my-6 p-6 bg-gray-50 rounded-lg">
+                  <div className="team-container transform transition-all duration-500 hover:scale-110">
+                    <TeamLogo
+                      teamName={battingTeam}
+                      size="lg"
+                      showName={true}
+                      style="shadow"
+                    />
+                    <div className="text-xs bg-primary text-white rounded-full px-2 py-0.5 mt-2 mx-auto w-fit">
+                      Batting
+                    </div>
+                  </div>
 
-                  <div className="team-vs text-center px-2">VS</div>
+                  <div className="team-vs text-center px-4 py-2 mx-2 bg-gray-200 rounded-full font-bold text-gray-700 animate-pulse">
+                    VS
+                  </div>
 
-                  <TeamLogo teamName={bowlingTeam} size="lg" showName={true} />
+                  <div className="team-container transform transition-all duration-500 hover:scale-110">
+                    <TeamLogo
+                      teamName={bowlingTeam}
+                      size="lg"
+                      showName={true}
+                      style="shadow"
+                    />
+                    <div className="text-xs bg-secondary text-white rounded-full px-2 py-0.5 mt-2 mx-auto w-fit">
+                      Bowling
+                    </div>
+                  </div>
                 </div>
-
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2">
                     Host City
@@ -517,20 +577,24 @@ const PredictorForm = () => {
                 <h2 className="text-2xl font-bold text-gray-800">
                   Win Probability
                 </h2>
-              </div>
-
+              </div>{" "}
               <div className="grid grid-cols-2 gap-6 bg-gray-50 p-6 rounded-lg mb-6">
-                <div>
+                <div className="transform transition-all duration-300 hover:scale-105">
                   <div className="flex flex-col items-center mb-3">
                     <TeamLogo
                       teamName={battingTeam}
                       size="lg"
                       showName={true}
+                      style={
+                        prediction.battingTeamProb > prediction.bowlingTeamProb
+                          ? "shadow"
+                          : "flat"
+                      }
                     />
                   </div>
 
                   <div className="relative pt-4">
-                    <div className="overflow-hidden h-5 mb-1 text-xs flex rounded-full bg-gray-200">
+                    <div className="overflow-hidden h-6 mb-1 text-xs flex rounded-full bg-gray-200">
                       <div
                         style={{
                           width: `${prediction.battingTeamProb * 100}%`,
@@ -539,9 +603,9 @@ const PredictorForm = () => {
                       ></div>
                     </div>
                     <p
-                      className={`text-center font-bold text-xl ${
+                      className={`text-center font-bold text-2xl ${
                         prediction.battingTeamProb > prediction.bowlingTeamProb
-                          ? "text-green-600"
+                          ? "text-green-600 animate-bounce"
                           : ""
                       }`}
                     >
@@ -550,17 +614,22 @@ const PredictorForm = () => {
                   </div>
                 </div>
 
-                <div>
+                <div className="transform transition-all duration-300 hover:scale-105">
                   <div className="flex flex-col items-center mb-3">
                     <TeamLogo
                       teamName={bowlingTeam}
                       size="lg"
                       showName={true}
+                      style={
+                        prediction.bowlingTeamProb > prediction.battingTeamProb
+                          ? "shadow"
+                          : "flat"
+                      }
                     />
                   </div>
 
                   <div className="relative pt-4">
-                    <div className="overflow-hidden h-5 mb-1 text-xs flex rounded-full bg-gray-200">
+                    <div className="overflow-hidden h-6 mb-1 text-xs flex rounded-full bg-gray-200">
                       <div
                         style={{
                           width: `${prediction.bowlingTeamProb * 100}%`,
@@ -569,9 +638,9 @@ const PredictorForm = () => {
                       ></div>
                     </div>
                     <p
-                      className={`text-center font-bold text-xl ${
+                      className={`text-center font-bold text-2xl ${
                         prediction.bowlingTeamProb > prediction.battingTeamProb
-                          ? "text-green-600"
+                          ? "text-green-600 animate-bounce"
                           : ""
                       }`}
                     >
@@ -580,7 +649,6 @@ const PredictorForm = () => {
                   </div>
                 </div>
               </div>
-
               <div className="mt-4 text-center">
                 <div
                   className={`p-6 rounded-lg ${

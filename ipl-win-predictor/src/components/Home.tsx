@@ -1,11 +1,26 @@
 import { Link } from "react-scroll";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const Home = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [animationIndex, setAnimationIndex] = useState(0);
+  const [isPulsing, setIsPulsing] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
+
+    // Sequence animations for a staggered effect
+    const interval = setInterval(() => {
+      setAnimationIndex((prev) => (prev < 5 ? prev + 1 : prev));
+    }, 300);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Add a pulsing effect when hovering over the title
+  const handleTitleHover = useCallback(() => {
+    setIsPulsing(true);
+    setTimeout(() => setIsPulsing(false), 1000);
   }, []);
 
   return (
@@ -15,21 +30,40 @@ const Home = () => {
     >
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-primary/30 z-0"></div>
 
-      {/* Animated cricket balls background */}
+      {/* Animated cricket elements background */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {[...Array(10)].map((_, i) => (
+        {[...Array(15)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm"
+            className="absolute rounded-full backdrop-blur-sm"
             style={{
+              width: `${Math.random() * 2 + 0.5}rem`,
+              height: `${Math.random() * 2 + 0.5}rem`,
+              backgroundColor:
+                i % 3 === 0
+                  ? "rgba(255,255,255,0.1)"
+                  : i % 3 === 1
+                  ? "rgba(234,88,12,0.1)"
+                  : "rgba(37,99,235,0.1)",
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              animation: `float ${5 + Math.random() * 10}s linear infinite`,
+              animation: `float ${
+                5 + Math.random() * 15
+              }s ease-in-out infinite, 
+                         pulse ${3 + Math.random() * 5}s ease-in-out infinite`,
               animationDelay: `${Math.random() * 5}s`,
             }}
           ></div>
         ))}
       </div>
+
+      {/* Cricket ball seam animation */}
+      <div
+        className="absolute top-1/4 right-1/4 z-0 w-32 h-32 md:w-48 md:h-48 rounded-full border-2 border-dashed border-red-500/30"
+        style={{
+          animation: "spin 15s linear infinite",
+        }}
+      ></div>
 
       <div
         className={`text-center z-10 px-4 max-w-5xl transition-all duration-1000 transform ${
@@ -41,20 +75,53 @@ const Home = () => {
             src="/assets/ipl-logo.svg"
             alt="IPL Logo"
             className="h-24 md:h-32 animate-pulse"
-            style={{ animationDuration: "3s" }}
+            style={{
+              animationDuration: "3s",
+              filter: "drop-shadow(0 0 10px rgba(234, 88, 12, 0.5))",
+            }}
           />
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">
-          <span className="text-secondary">IPL</span> Win Probability Predictor
+        <h1
+          className="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg cursor-pointer"
+          onMouseEnter={handleTitleHover}
+        >
+          <span
+            className={`text-secondary inline-block transition-all duration-300 hover:scale-110 hover:rotate-3 ${
+              isPulsing ? "animate-pulse" : ""
+            }`}
+          >
+            IPL
+          </span>{" "}
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300">
+            Win Probability Predictor
+          </span>
         </h1>
 
-        <p className="text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto">
-          Harness the power of machine learning to predict match outcomes in
-          real-time with precision and accuracy
+        <p
+          className={`text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto transition-all duration-1000 transform ${
+            animationIndex >= 1
+              ? "translate-y-0 opacity-100"
+              : "translate-y-10 opacity-0"
+          }`}
+        >
+          <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent font-semibold">
+            Harness the power of machine learning
+          </span>{" "}
+          to predict match outcomes in real-time with{" "}
+          <span className="relative inline-block">
+            <span className="relative z-10">precision and accuracy</span>
+            <span className="absolute bottom-0 left-0 right-0 h-3 bg-secondary/30 -z-10 transform -rotate-1"></span>
+          </span>
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div
+          className={`flex flex-col sm:flex-row gap-4 justify-center transition-all duration-1000 transform ${
+            animationIndex >= 2
+              ? "translate-y-0 opacity-100"
+              : "translate-y-10 opacity-0"
+          }`}
+        >
           <Link
             to="predictor"
             spy={true}
@@ -90,8 +157,18 @@ const Home = () => {
         </div>
 
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20 transform hover:scale-105 transition-transform">
-            <div className="text-secondary text-4xl mb-3">
+          <div
+            className={`bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20 transform hover:scale-105 transition-all duration-500 hover:shadow-xl ${
+              animationIndex >= 1
+                ? "translate-y-0 opacity-100"
+                : "translate-y-10 opacity-0"
+            }`}
+            style={{ transitionDelay: "100ms" }}
+          >
+            <div
+              className="text-secondary text-4xl mb-3 animate-bounce"
+              style={{ animationDuration: "3s" }}
+            >
               <svg
                 className="w-12 h-12 mx-auto"
                 fill="none"
@@ -115,8 +192,18 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20 transform hover:scale-105 transition-transform">
-            <div className="text-secondary text-4xl mb-3">
+          <div
+            className={`bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20 transform hover:scale-105 transition-all duration-500 hover:shadow-xl ${
+              animationIndex >= 2
+                ? "translate-y-0 opacity-100"
+                : "translate-y-10 opacity-0"
+            }`}
+            style={{ transitionDelay: "300ms" }}
+          >
+            <div
+              className="text-secondary text-4xl mb-3 animate-pulse"
+              style={{ animationDuration: "4s" }}
+            >
               <svg
                 className="w-12 h-12 mx-auto"
                 fill="none"
@@ -138,8 +225,18 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20 transform hover:scale-105 transition-transform">
-            <div className="text-secondary text-4xl mb-3">
+          <div
+            className={`bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20 transform hover:scale-105 transition-all duration-500 hover:shadow-xl ${
+              animationIndex >= 3
+                ? "translate-y-0 opacity-100"
+                : "translate-y-10 opacity-0"
+            }`}
+            style={{ transitionDelay: "500ms" }}
+          >
+            <div
+              className="text-secondary text-4xl mb-3 animate-spin"
+              style={{ animationDuration: "10s" }}
+            >
               <svg
                 className="w-12 h-12 mx-auto"
                 fill="none"
@@ -163,30 +260,21 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Scroll down indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
+      {/* Scroll down indicator with animation */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
         <Link
           to="predictor"
           spy={true}
           smooth={true}
           duration={500}
-          className="text-white cursor-pointer flex flex-col items-center"
+          className="text-white cursor-pointer flex flex-col items-center group"
         >
-          <span className="text-sm mb-2">Scroll Down</span>
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M19 14l-7 7m0 0l-7-7m7 7V3"
-            ></path>
-          </svg>
+          <span className="text-sm mb-2 group-hover:text-secondary transition-colors">
+            Scroll Down
+          </span>
+          <div className="w-8 h-12 border-2 border-white rounded-full flex justify-center p-1 group-hover:border-secondary transition-colors">
+            <div className="w-1 bg-white rounded-full animate-[bounce_1.5s_infinite] group-hover:bg-secondary transition-colors"></div>
+          </div>
         </Link>
       </div>
     </div>

@@ -27,9 +27,13 @@ const Navbar = () => {
       }`}
     >
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="/" className="flex items-center space-x-3">
-          <img src="/assets/ipl-logo.svg" className="h-12" alt="IPL Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap text-primary">
+        <a href="/" className="flex items-center space-x-3 group">
+          <img
+            src="/assets/ipl-logo.svg"
+            className="h-12 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
+            alt="IPL Logo"
+          />
+          <span className="self-center text-2xl font-semibold whitespace-nowrap text-primary group-hover:text-secondary transition-colors duration-300">
             IPL Win Predictor
           </span>
         </a>
