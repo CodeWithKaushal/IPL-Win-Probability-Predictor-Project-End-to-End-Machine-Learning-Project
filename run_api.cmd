@@ -1,0 +1,3 @@
+@echo off
+echo Starting Flask API server...
+python api.py

@@ -1,0 +1,76 @@
+/* Custom styles for IPL Win Predictor */
+
+#root {
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Background overlay for the home section */
+.home-overlay {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Team colors */
+.team-csk {
+  background-color: #ffcc00;
+}
+.team-mi {
+  background-color: #004ba0;
+}
+.team-rcb {
+  background-color: #d1171c;
+}
+.team-kkr {
+  background-color: #3a225d;
+}
+.team-dc {
+  background-color: #0078bc;
+}
+.team-pbks {
+  background-color: #dd1f2d;
+}
+.team-rr {
+  background-color: #ff69b4;
+}
+.team-srh {
+  background-color: #ff822a;
+}
+.team-gt {
+  background-color: #1d428a;
+}
+.team-lsg {
+  background-color: #00ffff;
+}
+
+/* Animation for winner display */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0072bc;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #005a99;
+}

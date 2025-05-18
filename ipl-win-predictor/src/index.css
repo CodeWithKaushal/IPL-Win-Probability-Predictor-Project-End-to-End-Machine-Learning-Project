@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply min-h-screen bg-white;
+    background-image: url("/assets/cricket-stadium.svg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  #root {
+    @apply flex flex-col min-h-screen;
+  }
+
+  .card {
+    @apply bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6;
+  }
+
+  .match-summary {
+    @apply bg-primary/10 border-l-4 border-primary p-4 rounded my-4;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-hover transition-all w-full text-center;
+  }
+
+  .team-container {
+    @apply flex flex-col items-center justify-center p-2;
+  }
+
+  .team-vs {
+    @apply text-3xl font-bold text-secondary mx-4;
+  }
+}
